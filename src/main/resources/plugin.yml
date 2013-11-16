@@ -1,0 +1,3 @@
+name: Caldos
+version: 0.0.1
+main: net.caldonia.bukkit.plugins.caldos.Caldos
