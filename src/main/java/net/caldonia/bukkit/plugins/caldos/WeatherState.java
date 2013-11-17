@@ -1,49 +1,69 @@
 package net.caldonia.bukkit.plugins.caldos;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 /**
- * Representation of the state of the weather.
+ * WeatherState tracks the behaviour, requirements and availability of a WeatherType within a WeatherPattern.
  */
-public enum WeatherState {
-    /** Clear skies. */
-    CLEAR(false, false),
-    /** Just raining. */
-    RAIN(true, false),
-    /** Rain with thunder. */
-    STORM(true, true),
-    /** Just thunder. */
-    THUNDER(false, true);
+public class WeatherState {
+    /** WeatherType this WeatherState tracks. */
+    private WeatherType weatherType;
 
-    /** If weather is required. */
-    private boolean weather;
-    /** If thunder is required. */
-    private boolean thunder;
+    /** Ratio as is listed in configuration file, or WeatherType.getDefaultRatio(). */
+    private double rawRatio;
+
+    /** Actual ratio of WeatherType after summing all ratios within this WeatherPattern. */
+    private double ratio;
+
+    /** The minimum amount of ticks this WeatherType may be active for. */
+    private long minimum;
+
+    /** The maximum amount of ticks this WeatherType may be active for. */
+    private long maximum;
 
     /**
-     * Create a WeatherState enum, pre setup.
+     * Construct and initialise as WeatherState with variables populated and tracking state ready, updateRatio() must
+     * be called before the WeatherState is used for calculations.
      *
-     * @param weather true if weather is required
-     * @param thunder true if thunder is required
+     * @param weatherType which this WeatherState describes
+     * @param configurationSection configuration section from config file which describes this state
      */
-    WeatherState(boolean weather, boolean thunder) {
-        this.weather = weather;
-        this.thunder = thunder;
+    public WeatherState(WeatherType weatherType, ConfigurationSection configurationSection) {
+        this.weatherType = weatherType;
+
+        /* Copy data from configuration file, length defaults are sensible and default ration is obtained from the
+         * WeatherType enum. */
+        ratio = rawRatio = configurationSection.getDouble("ratio", weatherType.getDefaultRatio());
+        minimum = configurationSection.getLong("minimum", 600);
+        maximum = configurationSection.getLong("maximum", 0);
     }
 
     /**
-     * Return if this WeatherState wants weather.
+     * Provide the raw WeatherType enum which this WeatherState tracks.
      *
-     * @return true if weather is required
+     * @return WeatherType which this object tracks
      */
-    public boolean hasWeather() {
-        return weather;
+    public WeatherType getWeatherType() {
+        return weatherType;
     }
 
     /**
-     * Return if this WeatherSate wants thunder.
+     * Return the raw ratio as defined in the configuration file or WeatherType enum, this MUST NOT be used in
+     * calculations as it does not take into account other ratio values.
      *
-     * @return true if thunder is required
+     * @return raw ratio value as described by defaults or in configuration
      */
-    public boolean hasThunder() {
-        return thunder;
+    public double getRawRatio() {
+        return rawRatio;
+    }
+
+    /**
+     * Update the actual ratio to be used with the total of all ratios in the WeatherPattern, likely only called
+     * immediately after all WeatherStates have been initialised.
+     *
+     * @param total total of all WeatherState raw ratios
+     */
+    public void updateRatio(double total) {
+        ratio = rawRatio / total;
     }
 }
