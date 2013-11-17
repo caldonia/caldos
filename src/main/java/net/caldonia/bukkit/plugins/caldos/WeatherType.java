@@ -9,9 +9,7 @@ public enum WeatherType {
     /** Just raining. */
     RAIN(true, false, 0.0),
     /** Rain with thunder. */
-    STORM(true, true, 0.0),
-    /** Just thunder. */
-    THUNDER(false, true, 0.0);
+    STORM(true, true, 0.0);
 
     /** If weather is required. */
     private boolean weather;

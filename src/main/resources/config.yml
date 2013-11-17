@@ -35,17 +35,12 @@ worlds:
     # Rain weather is simply just rain on it's own, no effects will be present in some biomes (such as desert) due to
     # Minecraft client limitations.
     RAIN:
-      ratio: 0.10
+      ratio: 0.12
       minimum: 1200
       maximum: 0
     # Storm weather is the combination of rain and thunder, in some biomes (such as desert) only the thunder effect
     # will be present due to Minecraft client limitations.
     STORM:
       ratio: 0.08
-      minimum: 1200
-      maximum: 0
-    # Thunder weather is only thunder and lightning being played randomly, this should effect all biomes.
-    THUNDER:
-      ratio: 0.02
-      minimum: 1200
+      minimum: 600
       maximum: 0
