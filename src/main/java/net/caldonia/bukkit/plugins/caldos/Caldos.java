@@ -19,7 +19,7 @@ import java.util.logging.Level;
  */
 public class Caldos extends JavaPlugin implements Listener, Runnable {
     /** Period between weather checks (in ticks). */
-    public static int PERIODIC_DELAY = 20;
+    public static final int PERIODIC_DELAY = 20;
 
     /** Storage for weather patterns. */
     private Map<String, WeatherPattern> weatherPatterns;

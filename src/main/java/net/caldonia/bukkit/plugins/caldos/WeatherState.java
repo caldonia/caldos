@@ -2,10 +2,15 @@ package net.caldonia.bukkit.plugins.caldos;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Random;
+
 /**
  * WeatherState tracks the behaviour, requirements and availability of a WeatherType within a WeatherPattern.
  */
 public class WeatherState {
+    /** Default number of ticks to calculate initial allocation with. */
+    public static final long INITIAL_ALLOCATION_TICKS = 24000;
+
     /** WeatherType this WeatherState tracks. */
     private WeatherType weatherType;
 
@@ -20,6 +25,12 @@ public class WeatherState {
 
     /** The maximum amount of ticks this WeatherType may be active for. */
     private long maximum;
+
+    /** The number of ticks which are available for this WeatherType. */
+    private double ticksAvailable;
+
+    /** Internal randomiser. */
+    private Random random = new Random();
 
     /**
      * Construct and initialise as WeatherState with variables populated and tracking state ready, updateRatio() must
@@ -65,5 +76,43 @@ public class WeatherState {
      */
     public void updateRatio(double total) {
         ratio = rawRatio / total;
+        ticksAvailable = INITIAL_ALLOCATION_TICKS * ratio;
+    }
+
+    /**
+     * Increase the amount of ticks of this WeatherType available based upon the number of ticks which have passed in
+     * game.
+     *
+     * @param ticksPassed the number of ticks which have passed
+     */
+    public void passTime(long ticksPassed) {
+        ticksAvailable += ticksPassed * ratio;
+    }
+
+    /**
+     * Check to see if the WeatherState has enough ticks available to meet it's minimum requirement.
+     *
+     * @return true if there are enough ticks available to use
+     */
+    public boolean isAvailable() {
+        return (ticksAvailable > minimum);
+    }
+
+    /**
+     * Allocate a number of ticks from this WeatherState, consuming them from the total available ticks. Does not check
+     * to see if minimum number of ticks is available, will consume regardless and may result in negative availability.
+     *
+     * @return number of ticks to use
+     */
+    public long allocateTicks() {
+        long randomTicks = minimum;
+
+        /* Only attempt to add a random number of ticks if the available count is over the minimum allocation. */
+        if (ticksAvailable > minimum) {
+            randomTicks += (long) (random.nextDouble() * (ticksAvailable - minimum));
+        }
+
+        ticksAvailable -= randomTicks;
+        return randomTicks;
     }
 }

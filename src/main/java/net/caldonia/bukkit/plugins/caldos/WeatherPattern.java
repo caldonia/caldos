@@ -12,6 +12,9 @@ public class WeatherPattern {
     /** The current WeatherSate in this WeatherPattern, default state is clear. */
     private WeatherState currentWeatherState;
 
+    /** Current WeatherState is held until this tick. */
+    private long currentHeldUntil;
+
     /** Current time of the world in ticks. */
     private long lastTime;
 
@@ -43,8 +46,9 @@ public class WeatherPattern {
             ws.updateRatio(totalRatio);
         }
 
-        /* Find WeatherState for WeatherType.CLEAR and set to the current WheaterState. */
+        /* Find WeatherState for WeatherType.CLEAR and set to the current WeatherState. */
         currentWeatherState = weatherStates.get(WeatherType.CLEAR);
+        currentHeldUntil = initialTime;
 
         /* Force update of time which will cause a weather calculation to be made. */
         updateTime(initialTime);
@@ -56,13 +60,28 @@ public class WeatherPattern {
      * @param time new full time from world
      */
     public void updateTime(long time) {
-        // Valid Transitions
-        // Clear -> Rain, Thunder
-        // Rain -> Clear, Storm
-        // Storm -> Rain
-        // Thunder -> Clear, Storm
+        /* If this isn't the first time run then cycle through the states and tell them how much time has passed so
+         * that they can calculate the number of ticks of their WeatherType has available. */
+        if (lastTime != 0) {
+            for (WeatherState ws : weatherStates.values()) {
+                ws.passTime(time - lastTime);
+            }
+        }
 
-        // TODO: UPDATE DESIRED WEATHER HERE!
+        /* Check to see if the weather is currently being held, if we haven't passed that point do nothing. */
+        if (time >= currentHeldUntil) {
+
+
+
+            // Valid Transitions
+            // Clear -> Rain, Thunder, Storm
+            // Rain -> Clear, Storm
+            // Storm -> Clear, Rain, Thunder
+            // Thunder -> Clear, Storm, Rain
+
+            // TODO: UPDATE DESIRED WEATHER HERE!
+
+        }
 
         /* Update the last time we were polled. */
         lastTime = time;
