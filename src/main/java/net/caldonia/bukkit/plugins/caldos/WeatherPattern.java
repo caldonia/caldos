@@ -6,11 +6,8 @@ import org.bukkit.configuration.ConfigurationSection;
  * WeatherPattern tracks and controls the behaviour of weather and thunder in a world.
  */
 public class WeatherPattern {
-    /** Cache of if the weather pattern currently desires thunder. */
-    private boolean desireThunder = false;
-
-    /** Cache of if the weather pattern currently desires weather. */
-    private boolean desireWeather = false;
+    /** The current WeatherSate in this WeatherPattern. */
+    private WeatherState weatherState;
 
     /** Current time of the world in ticks. */
     private long lastTime;
@@ -22,12 +19,19 @@ public class WeatherPattern {
      * @param initialTime the time of the world when the weather pattern was created
      */
     public WeatherPattern(ConfigurationSection configurationSection, long initialTime) {
+        weatherState = WeatherState.CLEAR;
+
         // TODO: LOAD CONFIGURATION STATE!
 
         /* Force update of time which will cause a weather calculation to be made. */
         updateTime(initialTime);
     }
 
+    /**
+     * Update the current time in this WeatherPattern, here decisions about the weather are made.
+     *
+     * @param time new full time from world
+     */
     public void updateTime(long time) {
         // TODO: UPDATE DESIRED WEATHER HERE!
 
@@ -41,7 +45,7 @@ public class WeatherPattern {
      * @return true if thunder is required
      */
     public boolean desireThunder() {
-        return desireThunder;
+        return weatherState.hasThunder();
     }
 
     /**
@@ -50,6 +54,6 @@ public class WeatherPattern {
      * @return true if weather is required
      */
     public boolean desireWeather() {
-        return desireWeather;
+        return weatherState.hasWeather();
     }
 }

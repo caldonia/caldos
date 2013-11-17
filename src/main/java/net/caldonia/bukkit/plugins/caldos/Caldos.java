@@ -9,7 +9,6 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,7 +108,7 @@ public class Caldos extends JavaPlugin implements Listener, Runnable {
         /* If we're controlling weather, then ensure that the new state is what the pattern desires. */
         if (weatherPattern != null && weatherPattern.desireWeather() != wce.toWeatherState()) {
             wce.setCancelled(true);
-            log(Level.INFO, "\"" + wce.getWorld().getName() + "\" thunder was set to \"" + wce.toWeatherState() + "\" but not desired, canceled!");
+            log(Level.INFO, "\"" + wce.getWorld().getName() + "\" weather was set to \"" + wce.toWeatherState() + "\" but not desired, canceled!");
         }
     }
 
