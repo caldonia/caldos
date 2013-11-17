@@ -2,7 +2,6 @@ package net.caldonia.bukkit.plugins.caldos;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -70,15 +69,6 @@ public class WeatherState {
     }
 
     /**
-     * Return the sanitised ratio which is calculated after updateRatio() is called.
-     *
-     * @return sanitised ratio
-     */
-    public double getRatio() {
-        return ratio;
-    }
-
-    /**
      * Update the actual ratio to be used with the total of all ratios in the WeatherPattern, likely only called
      * immediately after all WeatherStates have been initialised.
      *
@@ -128,7 +118,7 @@ public class WeatherState {
 
         /* Only attempt to add a random number of ticks if the available count is over the minimum allocation. */
         if (ticksAvailable > minimum) {
-            randomTicks += (long) (random.nextDouble() * (ticksAvailable - minimum));
+            randomTicks += (long) (random.nextDouble() * ((ticksAvailable > maximum ? maximum : ticksAvailable) - minimum));
         }
 
         ticksAvailable -= randomTicks;

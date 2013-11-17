@@ -71,7 +71,7 @@ public class WeatherPattern {
 
         /* Check to see if the weather is currently being held, if we haven't passed that point do nothing. */
         if (time >= currentHeldUntil) {
-            /* Copy the list of WeatherStates and sort with likelyhood to be used. */
+            /* Copy the list of WeatherStates. */
             List<WeatherState> ws = new ArrayList<>();
             ws.addAll(weatherStates.values());
 
@@ -81,17 +81,20 @@ public class WeatherPattern {
                 totalTicks += wss.getTicksAvailable();
             }
 
+            /* Order the array with the Comparator. */
             Collections.sort(ws, new WeatherSelectorComparator(totalTicks));
 
-            /* Cycle through sorted options, ignoring THUNDER if we're currently on RAIN. */
-            for (WeatherState wss : ws) {
-                if (currentWeatherState.getWeatherType() != WeatherType.RAIN || wss.getWeatherType() != WeatherType.THUNDER) {
-                    currentWeatherState = wss;
-                    currentHeldUntil = time + wss.allocateTicks();
+            /* Select the first state. */
+            WeatherState wss = ws.get(0);
 
-                    System.out.println("Change to " + wss.getWeatherType() + " for " + (currentHeldUntil - time) + " ticks!");
-                    break;
-                }
+            /* If there's a top entry then set it, else sleep for a delay. */
+            if (wss != null) {
+                currentWeatherState = wss;
+                currentHeldUntil = time + wss.allocateTicks();
+
+                System.out.println("Change to " + wss.getWeatherType() + " for " + (currentHeldUntil - time) + " ticks!");
+            } else {
+                currentHeldUntil = time + WeatherState.INITIAL_ALLOCATION_TICKS;
             }
         }
 
