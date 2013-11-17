@@ -2,8 +2,7 @@ package net.caldonia.bukkit.plugins.caldos;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * WeatherPattern tracks and controls the behaviour of weather and thunder in a world.
@@ -60,6 +59,8 @@ public class WeatherPattern {
      * @param time new full time from world
      */
     public void updateTime(long time) {
+        System.out.println(time);
+
         /* If this isn't the first time run then cycle through the states and tell them how much time has passed so
          * that they can calculate the number of ticks of their WeatherType has available. */
         if (lastTime != 0) {
@@ -70,17 +71,28 @@ public class WeatherPattern {
 
         /* Check to see if the weather is currently being held, if we haven't passed that point do nothing. */
         if (time >= currentHeldUntil) {
+            /* Copy the list of WeatherStates and sort with likelyhood to be used. */
+            List<WeatherState> ws = new ArrayList<>();
+            ws.addAll(weatherStates.values());
 
+            /* Sum all the allocated ticks together. */
+            long totalTicks = 0;
+            for (WeatherState wss : ws) {
+                totalTicks += wss.getTicksAvailable();
+            }
 
+            Collections.sort(ws, new WeatherSelectorComparator(totalTicks));
 
-            // Valid Transitions
-            // Clear -> Rain, Thunder, Storm
-            // Rain -> Clear, Storm
-            // Storm -> Clear, Rain, Thunder
-            // Thunder -> Clear, Storm, Rain
+            /* Cycle through sorted options, ignoring THUNDER if we're currently on RAIN. */
+            for (WeatherState wss : ws) {
+                if (currentWeatherState.getWeatherType() != WeatherType.RAIN || wss.getWeatherType() != WeatherType.THUNDER) {
+                    currentWeatherState = wss;
+                    currentHeldUntil = time + wss.allocateTicks();
 
-            // TODO: UPDATE DESIRED WEATHER HERE!
-
+                    System.out.println("Change to " + wss.getWeatherType() + " for " + (currentHeldUntil - time) + " ticks!");
+                    break;
+                }
+            }
         }
 
         /* Update the last time we were polled. */

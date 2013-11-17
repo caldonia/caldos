@@ -2,6 +2,7 @@ package net.caldonia.bukkit.plugins.caldos;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -29,7 +30,7 @@ public class WeatherState {
     /** The number of ticks which are available for this WeatherType. */
     private double ticksAvailable;
 
-    /** Internal randomiser. */
+    /** Internal Random object. */
     private Random random = new Random();
 
     /**
@@ -69,6 +70,15 @@ public class WeatherState {
     }
 
     /**
+     * Return the sanitised ratio which is calculated after updateRatio() is called.
+     *
+     * @return sanitised ratio
+     */
+    public double getRatio() {
+        return ratio;
+    }
+
+    /**
      * Update the actual ratio to be used with the total of all ratios in the WeatherPattern, likely only called
      * immediately after all WeatherStates have been initialised.
      *
@@ -76,7 +86,7 @@ public class WeatherState {
      */
     public void updateRatio(double total) {
         ratio = rawRatio / total;
-        ticksAvailable = INITIAL_ALLOCATION_TICKS * ratio;
+        ticksAvailable = (INITIAL_ALLOCATION_TICKS * ratio) + (100 * random.nextDouble());
     }
 
     /**
@@ -99,6 +109,15 @@ public class WeatherState {
     }
 
     /**
+     * Get the number of ticks which are available for this WeatherState.
+     *
+     * @return number of ticks available
+     */
+    public double getTicksAvailable() {
+        return ticksAvailable;
+    }
+
+    /**
      * Allocate a number of ticks from this WeatherState, consuming them from the total available ticks. Does not check
      * to see if minimum number of ticks is available, will consume regardless and may result in negative availability.
      *
@@ -114,5 +133,17 @@ public class WeatherState {
 
         ticksAvailable -= randomTicks;
         return randomTicks;
+    }
+
+    /**
+     * Calculate how close the actual ratio of total allocated blocks is to the desired ratio. The ratio of that is
+     * the resulting value.
+     *
+     * @param totalAllocated the total number of blocks currently allocated
+     * @return how likely this weather state should be used
+     */
+    public double getLikelihood(double totalAllocated) {
+        double totalRatio = ticksAvailable / totalAllocated;
+        return (totalRatio / ratio);
     }
 }

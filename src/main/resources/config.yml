@@ -1,6 +1,13 @@
 # Caldos configuration file, only worlds defined in this file will be managed. Worlds can be defined which will be
 # loaded later.
 #
+# Ticks to Seconds Quick Reference
+# 20    = 1 second
+# 1200  = 60 seconds
+# 6000  = 5 minutes
+# 12000 = 10 minutes
+# 24000 = 20 minutes (1 Minecraft Day)
+#
 # All worlds are defined under the "worlds" section, the name of the section must exactly match that of the world to
 # be controlled.
 worlds:
@@ -16,6 +23,10 @@ worlds:
       # The minimum amount of time (in ticks, i.e. 20/second) that the world can be in this state, this value can be
       # ignored by setting it to 0 or less. To ensure a world is always in this state use the ratio (i.e. this as 1
       # and all others as 0). Defaults to 600 ticks (30 seconds).
+      #
+      # By combining ratios and minimums you can ensure that some weather types are very infrequent, ratios control
+      # how quickly the weather type is refilled. A highish minimum with a low ratio will ensure the type incurs
+      # infrequently.
       minimum: 1200
       # The maximum amount of time (in ticks, i.e. 20/second) that the world can be in this state, this value can be
       # ignored by setting it to 0 or less. To ensure a world is never in this state use the ratio (i.e. this as 0 and
