@@ -31,6 +31,9 @@ worlds:
       # The maximum amount of time (in ticks, i.e. 20/second) that the world can be in this state, this value can be
       # ignored by setting it to 0 or less. To ensure a world is never in this state use the ratio (i.e. this as 0 and
       # at least one other as 1 or more). Defaults to 0 ticks, unlimited.
+      #
+      # Counter intuitively this is not the maximum amount of time this weather state lasts, it's the maximum amount
+      # of time until it's next reconsidered.
       maximum: 0
     # Rain weather is simply just rain on it's own, no effects will be present in some biomes (such as desert) due to
     # Minecraft client limitations.
