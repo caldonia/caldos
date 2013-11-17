@@ -1,2 +1,38 @@
+# Caldos configuration file, only worlds defined in this file will be managed. Worlds can be defined which will be
+# loaded later.
+#
+# All worlds are defined under the "worlds" section, the name of the section must exactly match that of the world to
+# be controlled.
 worlds:
   world:
+    # Clear weather is normal clear skies, no rain or thunder.
+    clear:
+      # The ratio the amount of time which the worlds should spend in this type of weather, ratio can be specified
+      # in any quantity of units, Caldos will sum all of the ratios in a world together and calculate the actual ratio
+      # required.
+      ratio: 0.8
+      # The minimum amount of time (in ticks, i.e. 20/second) that the world can be in this state, this value can be
+      # ignored by setting it to 0 or less. To ensure a world is always in this state use the ratio (i.e. this as 1
+      # and all others as 0).
+      minimum: 1200
+      # The maximum amount of time (in ticks, i.e. 20/second) that the world can be in this state, this value can be
+      # ignored by setting it to 0 or less. To ensure a world is never in this state use the ratio (i.e. this as 0 and
+      # at least one other as 1 or more).
+      maximum: 0
+    # Rain weather is simply just rain on it's own, no effects will be present in some biomes (such as desert) due to
+    # Minecraft client limitations.
+    rain:
+      ratio: 0.10
+      minimum: 1200
+      maximum: 0
+    # Storm weather is the combination of rain and thunder, in some biomes (such as desert) only the thunder effect
+    # will be present due to Minecraft client limitations.
+    storm:
+      ratio: 0.08
+      minimum: 1200
+      maximum: 0
+    # Thunder weather is only thunder and lightning being played randomly, this should effect all biomes.
+    thunder:
+      ratio: 0.02
+      minimum: 1200
+      maximum: 0
