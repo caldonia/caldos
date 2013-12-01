@@ -59,8 +59,6 @@ public class WeatherPattern {
      * @param time new full time from world
      */
     public void updateTime(long time) {
-        System.out.println(time);
-
         /* If this isn't the first time run then cycle through the states and tell them how much time has passed so
          * that they can calculate the number of ticks of their WeatherType has available. */
         if (lastTime != 0) {
