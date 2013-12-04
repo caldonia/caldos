@@ -89,8 +89,6 @@ public class WeatherPattern {
             if (wss != null) {
                 currentWeatherState = wss;
                 currentHeldUntil = time + wss.allocateTicks();
-
-                System.out.println("Change to " + wss.getWeatherType() + " for " + (currentHeldUntil - time) + " ticks!");
             } else {
                 currentHeldUntil = time + WeatherState.INITIAL_ALLOCATION_TICKS;
             }
