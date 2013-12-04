@@ -118,7 +118,7 @@ public class WeatherState {
 
         /* Only attempt to add a random number of ticks if the available count is over the minimum allocation. */
         if (ticksAvailable > minimum) {
-            randomTicks += (long) (random.nextDouble() * ((ticksAvailable > maximum ? maximum : ticksAvailable) - minimum));
+            randomTicks += (long) (random.nextDouble() * ((ticksAvailable > maximum && maximum != 0 ? maximum : ticksAvailable) - minimum));
         }
 
         ticksAvailable -= randomTicks;
