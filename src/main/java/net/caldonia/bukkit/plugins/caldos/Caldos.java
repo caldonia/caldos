@@ -24,7 +24,10 @@ public class Caldos extends JavaPlugin implements Listener, Runnable {
     /** Storage for weather patterns. */
     private Map<String, WeatherPattern> weatherPatterns;
 
-    @Override
+    /** Storage for fixed times. */
+    private Map<String, Integer> fixedTimes;
+
+     @Override
     public void onEnable() {
         /* Save default configuration to disk. */
         saveDefaultConfig();
@@ -76,6 +79,19 @@ public class Caldos extends JavaPlugin implements Listener, Runnable {
                 }
             }
         }
+
+        /* Cycle through fixed times. */
+        for (String worldName : fixedTimes.keySet()) {
+            /* Fetch world. */
+            World world = getServer().getWorld(worldName);
+
+            /* Check to see if the world exists. */
+            if (world != null) {
+                /* Retrieve time and set on world. */
+                int time = fixedTimes.get(worldName);
+                world.setTime(time);
+            }
+        }
     }
 
     /**
@@ -118,6 +134,7 @@ public class Caldos extends JavaPlugin implements Listener, Runnable {
     public void loadConfiguration() {
         /* New patterns. */
         Map<String, WeatherPattern> newWeatherPatterns = new HashMap<>();
+        Map<String, Integer> newFixedTimes = new HashMap<>();
 
         /* Pre-populate weather patterns storage with empty array in case we break out.*/
         if (weatherPatterns == null) {
@@ -148,13 +165,23 @@ public class Caldos extends JavaPlugin implements Listener, Runnable {
                 currentTime = world.getFullTime();
             }
 
+            /* Pull the world config. */
+            ConfigurationSection specificWorldConfig = worldConfigurationSection.getConfigurationSection(worldName);
+
             /* Create new weather pattern and store. */
-            WeatherPattern weatherPattern = new WeatherPattern(worldConfigurationSection.getConfigurationSection(worldName), currentTime);
+            WeatherPattern weatherPattern = new WeatherPattern(specificWorldConfig, currentTime);
             newWeatherPatterns.put(worldName, weatherPattern);
+
+            /* Check for a fixed time. */
+            if (specificWorldConfig.isSet("time")) {
+                int time = specificWorldConfig.getInt("time");
+                newFixedTimes.put(worldName, time);
+            }
         }
 
         /* Commit new patterns. */
         weatherPatterns = newWeatherPatterns;
+        fixedTimes = newFixedTimes;
 
         /* Cause recalculation and setting of weather. */
         run();
